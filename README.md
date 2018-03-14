@@ -113,7 +113,7 @@ node app.js
 ```
 We should get the words `Hello World!` on our screen.
 
-No lets move to something slightly more complex. First we need to import our libraries:
+Now lets move to something slightly more complex. First we need to import our libraries:
 ```js
 const express = require('express')
 var bodyParser = require("body-parser")
