@@ -46,6 +46,14 @@ let bob = {}
 ```
 
 ```js
+// This is a more complex Array
+let bob = ['bob', 'bill']
+
+// We can access values in it like this
+console.log(bob[0])
+```
+
+```js
 // This is a more complex Object
 let bob = { bob: 'bill', bill: 0 }
 
@@ -65,6 +73,31 @@ bob()
 // This is a special function
 () => {
   // Something happens here
+}
+```
+
+```js
+// This is a loop
+for (let i=0; i<10; i++) {
+  // It will run this code 10 times
+}
+```
+
+```js
+let bob = 0
+
+// This is an if statement
+if (bob == 0) {
+  // This code will be run
+}
+
+// This is a more complex if statement
+if (bob == 0) {
+  // This check happens first
+} else if (bob > 10) {
+  // Then this check happens
+} else {
+  // If neither is true this is run
 }
 ```
 
@@ -199,3 +232,82 @@ node app.js
 ```
 
 Now if we refresh our web browser we should see the web page we just made.
+
+Next we're going to write the code to change the pages colour. Starting in `app.js` we're going to add this variable at the top of the file:
+```js
+const express = require('express')
+var bodyParser = require("body-parser")
+const app = express()
+
+let colour = '#ffff00'
+```
+
+Now we can define some end points that the web browser will use to talk to the server. This one is for getting the current colour:
+```js
+app.get('/getColour', (req, res) => {
+  res.send(colour)
+})
+```
+
+This one is for setting the colour:
+```js
+app.post('/setColour', (req, res) => {
+  colour = req.body.colour
+})
+```
+
+Now we need to write some code to talk to the server. This can be done by adding code to the `index.js` file. First we want to get the colour from the server and set the background to it:
+```js
+setInterval(() => {
+  axios.get('/getColour').then((response) => {
+    if (document.getElementById('colour') != document.activeElement) {
+      document.body.style.backgroundColor = response.data
+      document.getElementById('colour').value = response.data
+    }
+  }).catch((error) => {
+    console.log(error)
+  })
+}, 1000)
+```
+
+Breaking that block down first we want to run some code on repeat at a set interval of every second:
+```js
+setInterval(() => {console.log('This is run every second')}, 1000)
+```
+
+This code then goes and gets the colour:
+```js
+axios.get('/getColour').then((response) => {
+  if (document.getElementById('colour') != document.activeElement) {
+    console.log('The colour is: ' + response.data)
+  }
+}).catch((error) => {
+  console.log(error)
+})
+```
+
+This then sets the background of the page:
+```js
+document.body.style.backgroundColor = response.data
+document.getElementById('colour').value = response.data
+```
+
+This code then submits the colour when the user presses submit:
+```js
+function submit() {
+  let colour = document.getElementById('colour').value
+
+  axios.post('/setColour', {
+    colour: colour
+  }).then((response) => {
+    console.log(response)
+  }).catch((error) => {
+    console.log(error)
+  })
+}
+```
+
+Now if we restart the node process by going to our terminal pressing `CTRL + C` and then run `node app.js`.
+
+## And we're done
+Now the challenge is to extend this to add more features. A fun and simple extension would be having to areas on the page that can have separately controlled colours.
